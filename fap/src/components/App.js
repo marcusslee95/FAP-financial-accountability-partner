@@ -4,6 +4,7 @@ import AddBehavior from './AddBehavior';
 import Dashbiard from './Dashboard';
 import Welcome from './Welcome';
 import AddPartner from './AddPartner';
+import Login from './Login';
 
 
 const App = () => {
@@ -12,6 +13,9 @@ const App = () => {
             <Switch>
                 <Route exact path="/">
                     <Welcome/>
+                </Route>
+                <Route exact path="/login">
+                    <Login/>
                 </Route>
                 <Route exact path="/dashboard">
                     <Dashbiard/>
