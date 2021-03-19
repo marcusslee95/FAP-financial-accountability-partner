@@ -1,11 +1,13 @@
 import React from 'react';
 import { Switch, Route, BrowserRouter as Router } from 'react-router-dom';
 import AddBehavior from './AddBehavior';
-import Dashbiard from './Dashboard';
+import Dashboard from './Dashboard';
 import Welcome from './Welcome';
 import AddPartner from './AddPartner';
 import Login from './Login';
 
+const ThemeContext = React.createContext();
+export { ThemeContext }
 
 const App = () => {
     return (
@@ -17,8 +19,9 @@ const App = () => {
                 <Route exact path="/login">
                     <Login/>
                 </Route>
+                <ThemeContext.Provider value="dark">
                 <Route exact path="/dashboard">
-                    <Dashbiard/>
+                    <Dashboard/>
                 </Route>
                 <Route exact path="/addBehavior">
                     <AddBehavior/>
@@ -26,6 +29,7 @@ const App = () => {
                 <Route exact path="/addPartner">
                     <AddPartner/>
                 </Route>
+                </ThemeContext.Provider>
             </Switch>
         </Router>
 

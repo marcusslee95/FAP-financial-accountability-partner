@@ -4,7 +4,7 @@ import { useHistory } from "react-router"
 
 
 
-const Dashbiard = () => {
+const Dashboard = () => {
     const history = useHistory()
     return (
         <Fragment>
@@ -110,4 +110,6 @@ const Partners = (props) => {
 }
 
 
-export default Dashbiard
+export default Dashboard
+
+
