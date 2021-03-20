@@ -38,7 +38,7 @@ const AddBehavior = () => {
         case 'Opening a 529':
             inputOptionsDependingOnSelectedOption = (
                 <Fragment>
-                    <input placeholder='Frequency'/>
+                    {/* <input placeholder='Frequency'/> */}
                 </Fragment>
             )
                 break
