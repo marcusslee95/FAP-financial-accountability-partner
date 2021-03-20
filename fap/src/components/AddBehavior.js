@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 import { Fragment } from "react"
 import { useHistory } from 'react-router';
-// import { ThemeContext } from './App';
-
-
 
 const AddBehavior = () => {
     const history = useHistory()
@@ -56,8 +53,6 @@ const AddBehavior = () => {
         </div>
     )
 
-    // console.log(ThemeContext)
-
     return (
         <Fragment>
             <div>Logo</div>
@@ -76,21 +71,7 @@ const AddBehavior = () => {
             </div>
             {userHasSelectedSomething ? stuffToShowConditionally : null }
         </Fragment>
-        // <ThemeContext.Consumer>
-        //     {value => <div>{value}</div>}
-        // </ThemeContext.Consumer>
-
     )
 }
 
 export default AddBehavior
-
-{/* <ThemeContext.Consumer>
-{theme => (
-  <UserContext.Consumer>
-    {user => (
-      <ProfilePage user={user} theme={theme} />
-    )}
-  </UserContext.Consumer>
-)}
-</ThemeContext.Consumer> */}

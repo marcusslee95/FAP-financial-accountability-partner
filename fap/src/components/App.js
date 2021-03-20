@@ -6,9 +6,6 @@ import Welcome from './Welcome';
 import AddPartner from './AddPartner';
 import Login from './Login';
 
-const ThemeContext = React.createContext();
-export { ThemeContext }
-
 const App = () => {
     return (
         <Router>
@@ -19,7 +16,6 @@ const App = () => {
                 <Route exact path="/login">
                     <Login/>
                 </Route>
-                <ThemeContext.Provider value="dark">
                 <Route exact path="/dashboard">
                     <Dashboard/>
                 </Route>
@@ -29,7 +25,6 @@ const App = () => {
                 <Route exact path="/addPartner">
                     <AddPartner/>
                 </Route>
-                </ThemeContext.Provider>
             </Switch>
         </Router>
 
