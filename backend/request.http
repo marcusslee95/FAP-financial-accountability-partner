@@ -3,6 +3,13 @@
 http://localhost:4000/users/1?behaviors&partners
 # /surfreport/{beachId}?days=3&units=metric&time=1400 -> https://idratherbewriting.com/learnapidoc/docapis_doc_parameters.html
 
+###
+
+http://localhost:4000/users/1?behaviors
+
+###
+
+http://localhost:4000/users/1?partners
 
 ###
 

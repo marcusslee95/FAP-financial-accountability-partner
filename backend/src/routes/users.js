@@ -29,11 +29,39 @@ router.get('/users/:id', async (req, res) => {
         }
         //AFTER: let's check if the user even exists before looking for all their bhs and prtnrs -> would be a waste of load if looked for bhs and prtnrs of nonexistent user
 
-        const allBhsAndPrtnrsOfAUser = await UsersRepository.findAllBhsAndPrtnrsOfAUser(id)
-        res.send(allBhsAndPrtnrsOfAUser)
+        const bhsAndPrtnrsOfAUser = await UsersRepository.findBhsAndPrtnrsOfAUser(id)
+        res.send(bhsAndPrtnrsOfAUser)
         return
     }
     //AFTER: if the request came w/query string parameters indicating it's asking for all user's behaviors and partners.... send back that info
+
+    //B4: if the request came w/just behaviros query string parameter.. send back behaviors 
+    if (whatWasInQueryString.hasOwnProperty('behaviors')) {
+        const user = await UsersRepository.findById(id)
+        if (!user){
+            res.status(404).send("There's no user w/this id")
+            return
+        }
+
+        const bhsOfAUser = await UsersRepository.findBhsOfAUser(id)
+        res.send(bhsOfAUser)
+        return
+    }
+    //AFTER: i if the request came w/just behaviros query string parameter.. send back behaviors 
+
+    //B4: if the request came w/just partners as query string parameter.. send back partners 
+    if (whatWasInQueryString.hasOwnProperty('partners')) {
+        const user = await UsersRepository.findById(id)
+        if (!user){
+            res.status(404).send("There's no user w/this id")
+            return
+        }
+
+        const prtnrsOfAUser = await UsersRepository.findPrtnrsOfAUser(id)
+        res.send(prtnrsOfAUser)
+        return
+    }
+    //AFTER: if the request came w/just partners as query string parameter.. send back partners 
 
     //B4: if the request is to just get the users table info back
     const user = await UsersRepository.findById(id)

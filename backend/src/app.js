@@ -2,11 +2,12 @@
 const express = require('express')
 const sampleRouter = require('./routes/sample')
 const usersRouter = require('./routes/users')
-
+const cors = require('cors')
 
 module.exports = () => {
     const app = express()
 
+    app.use(cors()) //https://expressjs.com/en/resources/middleware/cors.html
     app.use(express.json())
     app.use(sampleRouter)
     app.use(usersRouter)

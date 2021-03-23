@@ -18,9 +18,10 @@ class UsersRepository {
         return rows[0]
     }
 
-    static async findAllBhsAndPrtnrsOfAUser(id){
+    static async findBhsAndPrtnrsOfAUser(id){
         
         const responseObject = {}
+
         const queryForPrtnrsWhoMonitorOneOffBhs = await pool.query(
             'SELECT relationship, email, report_frequency, status FROM (SELECT partner_id FROM one_off_behaviors_users_partners WHERE user_id = $1) as idOfPartnersOfOneOffBehaviorsOfUser JOIN partners ON partner_id = partners.id', [id])
         responseObject['prtnrsWhoMonitorOneOffBhs'] = toCamelCase(queryForPrtnrsWhoMonitorOneOffBhs.rows)
@@ -36,6 +37,36 @@ class UsersRepository {
         const queryForRepeatedBhs = await pool.query(
             'SELECT DISTINCT name, marker, frequency, amount FROM (SELECT repeated_behavior_id FROM repeated_behaviors_users_partners WHERE user_id = $1) as idOfRepeatedBehaviorsOfUser JOIN repeated_behaviors on repeated_behavior_id = repeated_behaviors.id', [id])
         responseObject['repeatedBhs'] = queryForRepeatedBhs.rows 
+
+        return responseObject
+    }
+
+    static async findBhsOfAUser(id){
+        
+        const responseObject = {}
+
+        const queryForOneOffBhs = await pool.query(
+            'SELECT DISTINCT name, marker FROM (SELECT one_off_behavior_id FROM one_off_behaviors_users_partners WHERE user_id = $1) as idOfOneOffBehaviorsOfUser JOIN one_off_behaviors on one_off_behavior_id = one_off_behaviors.id', [id])
+        responseObject['oneOffBhs'] = queryForOneOffBhs.rows 
+
+        const queryForRepeatedBhs = await pool.query(
+            'SELECT DISTINCT name, marker, frequency, amount FROM (SELECT repeated_behavior_id FROM repeated_behaviors_users_partners WHERE user_id = $1) as idOfRepeatedBehaviorsOfUser JOIN repeated_behaviors on repeated_behavior_id = repeated_behaviors.id', [id])
+        responseObject['repeatedBhs'] = queryForRepeatedBhs.rows 
+
+        return responseObject
+    }
+
+    static async findPrtnrsOfAUser(id){
+        
+        const responseObject = {}
+
+        const queryForPrtnrsWhoMonitorOneOffBhs = await pool.query(
+            'SELECT relationship, email, report_frequency, status FROM (SELECT partner_id FROM one_off_behaviors_users_partners WHERE user_id = $1) as idOfPartnersOfOneOffBehaviorsOfUser JOIN partners ON partner_id = partners.id', [id])
+        responseObject['prtnrsWhoMonitorOneOffBhs'] = toCamelCase(queryForPrtnrsWhoMonitorOneOffBhs.rows)
+
+        const queryForPrtnrsWhoMonitorRepeatedBhs = await pool.query(
+            'SELECT relationship, email, report_frequency, status FROM (SELECT partner_id FROM repeated_behaviors_users_partners WHERE user_id = $1) as idOfPartnersOfRepeatedBehaviorsOfUser JOIN partners ON partner_id = partners.id', [id])
+        responseObject['prtnrsWhoMonitorRepeatedBhs'] = toCamelCase(queryForPrtnrsWhoMonitorRepeatedBhs.rows)
 
         return responseObject
     }
