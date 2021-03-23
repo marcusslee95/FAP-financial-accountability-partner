@@ -18,7 +18,7 @@ class UsersRepository {
         return rows[0]
     }
 
-    static async findAllUserBhsAndPrtnrs(id){
+    static async findAllBhsAndPrtnrsOfAUser(id){
         
         const responseObject = {}
         const queryForPrtnrsWhoMonitorOneOffBhs = await pool.query(
