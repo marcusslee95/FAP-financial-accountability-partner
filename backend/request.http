@@ -1,0 +1,250 @@
+###
+
+http://localhost:4000/testRoute1
+
+###
+
+http://localhost:4000/users
+
+###
+
+http://localhost:3333/users/5345
+
+###
+
+http://localhost:3333/users/5346
+
+###
+
+http://localhost:3333/users/a
+
+###
+# example of a sql injection attack (where request sender adds some malicious sql to their request. If this had executed it would have deleted our users table. Thankfully we wrote our query in such a way that 'Drop users' will never be run as it's own SQL statement
+http://localhost:3333/users/1;DROP TABLE users
+
+###
+
+POST http://localhost:3333/users/ HTTP/1.1
+content-type: application/json
+
+{
+    "username": "MickJagger69",
+    "phone": "6996697086"
+}
+
+###
+
+POST http://localhost:3333/users/ HTTP/1.1
+content-type: application/json
+
+{
+    "phone": "6996697086"
+}
+
+###
+
+POST http://localhost:3333/users/ HTTP/1.1
+content-type: application/json
+
+{
+    "username": "MickJagger69",
+    "email": "micky6969@dirty.com"
+}
+
+###
+
+POST http://localhost:3333/users/ HTTP/1.1
+content-type: application/json
+
+{
+    "email": "micky6969@dirty.com"
+}
+
+###
+
+DELETE http://localhost:3333/users/5359 HTTP/1.1
+content-type: application/json
+
+###
+
+DELETE http://localhost:3333/users/asfwfwe HTTP/1.1
+content-type: application/json
+
+
+###
+
+DELETE http://localhost:3333/users/1;DROP TABLE users HTTP/1.1
+content-type: application/json
+
+###
+
+PUT http://localhost:3333/users/5359 HTTP/1.1
+content-type: application/json
+
+{
+    "phone": "7777777777"
+}
+
+###
+
+PUT http://localhost:3333/users/5359 HTTP/1.1
+content-type: application/json
+
+{
+    "email": "mickyLucky@maroon5.com"
+}
+
+###
+
+PUT http://localhost:3333/users/5359 HTTP/1.1
+content-type: application/json
+
+{
+    "email": "mickyNOTTTTLucky@maroon5.com",
+    "phone": "66666666666"
+}
+
+###
+
+PUT http://localhost:3333/users/5359 HTTP/1.1
+content-type: application/json
+
+{
+    "email": "mickyWHOCARESABOUTBEINGLucky@maroon5.com",
+    "phone": "0000000000",
+    "bio": "The name's jagger. MickJagger",
+    "avatar": "https://upload.wikimedia.org/wikipedia/commons/b/bd/Mick_Jagger_Deauville_2014.jpg"
+}
+
+###
+
+PUT http://localhost:3333/users/avadacadabraaa HTTP/1.1
+content-type: application/json
+
+{
+    "email": "disneymickey@maroon5.com"
+}
+
+###
+
+PUT http://localhost:3333/users/5359 HTTP/1.1
+content-type: application/json
+
+{
+    "emaill": "disneymickey@maroon5.com"
+}
+
+###
+
+http://localhost:3333/userWithHighestId
+
+###
+
+http://localhost:3333/numberOfPostsByEachUser
+
+###
+
+http://localhost:3333/posts/5
+
+###
+
+http://localhost:3333/numberOfPostsByAParticularUser/Marquis.Johnson52
+
+###
+
+http://localhost:3333/numberOfLikesByEachUser
+
+###
+
+http://localhost:3333/numberOfLikesByAParticularUser/Deion_Lynch
+
+###
+
+http://localhost:3333/numberOfFollowersOfAParticularUser/1
+
+###
+
+http://localhost:3333/numberOfPeopleAParticularUserIsFollowing/1
+
+###
+
+http://localhost:3333/usernameOfFollowersOfAParticularUser/1
+
+###
+
+http://localhost:3333/usernameOfPeopleAParticularUserIsFollowing/1
+
+###
+
+POST http://localhost:3333/followers HTTP/1.1
+content-type: application/json
+
+{
+    "idOfUserWhoMadeClick": 5363,
+    "idOfUserWhoTheyJustFollowed": 5362
+}
+
+###
+
+DELETE http://localhost:3333/followers/5363&5362 HTTP/1.1
+content-type: application/json
+
+###
+
+http://localhost:3333/topFourHashtagsInPostsOfThisUser/12
+
+###
+
+http://localhost:3333/allTheDetailsToShowWhenGoToAProfilePageOFAUser/17
+
+###
+
+http://localhost:3333/allTheDetailsToShowWhenGoToAPostPageOFAUser/1
+
+###
+
+POST http://localhost:3333/likes HTTP/1.1
+content-type: application/json
+
+{
+    "idOfUserLikedThePost": 8,
+    "idOfThePost": 1
+}
+
+###
+
+POST http://localhost:3333/likes HTTP/1.1
+content-type: application/json
+
+{
+    "idOfUserLikedTheComment": 8,
+    "idOfTheComment": 1
+}
+
+###
+
+POST http://localhost:3333/comments HTTP/1.1
+content-type: application/json
+
+{
+    "idOfUserMadeTheComment": 8,
+    "idOfThePostCommentWasMadeOn": 1,
+    "content": "WOAHHH This DIY tool is so coooooooool!!!!!!!"
+}
+
+###
+
+http://localhost:3333/postsContainingAParticularHashtag/distributed
+
+
+###
+
+http://localhost:3333/top100UsersWithMostFollowers
+
+
+###
+
+http://localhost:3333/top10TrendingHashtags
+
+
+###
