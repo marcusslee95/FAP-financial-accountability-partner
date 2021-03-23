@@ -74,9 +74,16 @@ const Behaviors = (props) => {
                         }}>Delete</button>
                     </div>
                 )
-            // case y:
-            //   // code block
-            //   break;
+            case 'Do Your Taxes':
+                return (
+                    <div key={bh.name}>
+                        Name: {bh.name} and Marker: {markerCircle}<button onClick={() => { //if someone clicks delete then delete this behavior
+                        const bhsMinusbhToBeDeleted = oneOffBehaviors.filter(behavior => behavior.name !== bh.name) //https://stackoverflow.com/questions/5767325/how-can-i-remove-a-specific-item-from-an-array
+                        // console.log(bhsMinusbhToBeDeleted) 
+                        setOneOffBhs(bhsMinusbhToBeDeleted)
+                        }}>Delete</button>
+                    </div>
+                )
             // case y:
             //   // code block
             //   break;
@@ -129,9 +136,16 @@ const Behaviors = (props) => {
                         }}>Delete</button>
                     </div>
                 )
-            // case y:
-            //   // code block
-            //   break;
+            case 'send money to parents':
+                return (
+                    <div key={bh.name}>
+                        Name: {bh.name} and Amount: {bh.amount} and Frequency: {bh.frequency} Marker: {markerCircles}<button onClick={() => { //if someone clicks delete then delete this behavior
+                        const bhsMinusbhToBeDeleted = repeatedBehaviors.filter(behavior => behavior.name !== bh.name) 
+                        // console.log(bhsMinusbhToBeDeleted) 
+                        setRepeatedBhs(bhsMinusbhToBeDeleted)
+                        }}>Delete</button>
+                    </div>
+                )
             // case y:
             //   // code block
             //   break;
@@ -166,7 +180,7 @@ const Partners = (props) => {
         return (
         <div key={prtnr.relationship}>
             Relationship: {prtnr.relationship} and Email: {prtnr.email} and 
-            Report Freuquency: {prtnr.reportFrequency} and Monitoring These Behaviors: {prtnr.monitoringBehaviors} and 
+            Report Freuquency: {prtnr.reportFrequency} and Monitoring These Behaviors: {prtnr.name} and 
             Status: {prtnr.status}
             <button onClick={() => {//if someone clicks delete then delete this partner
                 const prtnrsMinusPrtnrToBeDeleted = prtnrs.filter(partner => partner.relationship !== prtnr.relationship)

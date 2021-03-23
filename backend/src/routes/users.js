@@ -11,6 +11,9 @@ router.get('/users', async (req, res) => { //marked function as async because an
     res.send(users)
 })
 
+
+
+//B4: using approach 2 in queries.sql
 router.get('/users/:id', async (req, res) => {
     const id = req.params.id
 
@@ -76,6 +79,6 @@ router.get('/users/:id', async (req, res) => {
     //AFTER: if the request is to just get the users table info back
     
 })
-
+//AFTER: using approach 2 in queries.sql
 
 module.exports = router

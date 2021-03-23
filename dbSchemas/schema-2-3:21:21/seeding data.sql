@@ -69,9 +69,39 @@ VALUES
   (1, 1, 3)
 -- AFTER: adding another partner for a bh that some other partner already monitors
 
+-- B4: adding a new 1Off behavior 
+INSERT INTO one_off_behaviors (name,marker)
+VALUES ('Do Your Taxes', false)
 
+INSERT INTO one_off_behaviors_users_partners (one_off_behavior_id,
+                    user_id, partner_id)
+VALUES 
+  (2, 1, NULL)
+-- AFTER: adding a new 1Off behavior 
 
+-- B4: getting a pre-existing partner to monitor a 1Off behavior
+UPDATE one_off_behaviors_users_partners
+SET partner_id = 3
+WHERE one_off_behavior_id = 2 AND user_id = 1
+-- AFTER: getting a pre-existing partner to monitor a 1Off behavior
 
+-- B4: adding a new repeated behavior 
+INSERT INTO repeated_behaviors (name, marker, frequency, amount)
+VALUES 
+  ('send money to parents', 
+   ARRAY [ true,
+      true, false, false ], 'biannually', 500)
 
+INSERT INTO repeated_behaviors_users_partners (repeated_behavior_id,
+                    user_id, partner_id)
+VALUES 
+  (2, 1, NULL)
+-- AFTER: adding a new repeated behavior 
+
+-- B4: getting a pre-existing partner to monitor a repeated behavior
+UPDATE repeated_behaviors_users_partners
+SET partner_id = 1
+WHERE repeated_behavior_id = 2 AND user_id = 1
+-- AFTER: getting a pre-existing partner to monitor a repeated behavior
 
 
