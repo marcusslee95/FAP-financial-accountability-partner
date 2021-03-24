@@ -180,12 +180,20 @@ const Partners = (props) => {
         return (
         <div key={prtnr.relationship}>
             Relationship: {prtnr.relationship} and Email: {prtnr.email} and 
-            Report Freuquency: {prtnr.reportFrequency} and Monitoring These Behaviors: {prtnr.name} and 
+            Report Frequency: {prtnr.reportFrequency} and Monitoring These Behaviors: {prtnr.name} and 
             Status: {prtnr.status}
-            <button onClick={() => {//if someone clicks delete then delete this partner
-                const prtnrsMinusPrtnrToBeDeleted = prtnrs.filter(partner => partner.relationship !== prtnr.relationship)
-                // console.log(prtnrsMinusPrtnrToBeDeleted)
-                setPrtnrs(prtnrsMinusPrtnrToBeDeleted)
+            <button onClick={() => {//if someone clicks delete.... then delete this partner
+                //delete them from the db
+                // axios.get(`http://localhost:4000/partners/${prtnr.partnerId}`)
+                axios.delete(`http://localhost:4000/users/1/partners/${prtnr.partnerId}`)
+                .then((res) => {//after we deleted the partner from the db.... we can just update state directly because.. - so long as we're sure the deletion was successful on db - it's wasteful to get all the partners again from db.... just subtract the deletedPartner from the state
+                    const deletedPrtnr = res.data
+                    console.log(deletedPrtnr)
+
+                    const prtnrsMinusPrtnrToBeDeleted = prtnrs.filter(partner => partner.partnerId !== deletedPrtnr.id)
+                    // console.log(prtnrsMinusPrtnrToBeDeleted)
+                    setPrtnrs(prtnrsMinusPrtnrToBeDeleted)
+                })
             }}>Delete</button>
         </div>
         )

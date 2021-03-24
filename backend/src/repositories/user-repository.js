@@ -104,7 +104,7 @@ class UsersRepository {
         // // AFTER: gets partners but not the bhs they're monitoring which is what we want
 
         const queryForPrtnrsWhoMonitorOneOffBhs = await pool.query(
-            'SELECT relationship, email, report_frequency, status, one_off_behaviors.name FROM (SELECT one_off_behavior_id, relationship, email, report_frequency, status FROM (SELECT partner_id, one_off_behavior_id FROM one_off_behaviors_users_partners WHERE user_id = $1) as idOfPartnersOfOneOffBehaviorsOfUser JOIN partners ON partner_id = partners.id) as PartnersOfOneOffBehaviorsOfUserWithoutBehaviorsTheyreMonitoring JOIN one_off_behaviors ON one_off_behavior_id = one_off_behaviors.id', [id])
+            'SELECT partner_id, relationship, email, report_frequency, status, one_off_behaviors.name FROM (SELECT partner_id, one_off_behavior_id, relationship, email, report_frequency, status FROM (SELECT partner_id, one_off_behavior_id FROM one_off_behaviors_users_partners WHERE user_id = $1) as idOfPartnersOfOneOffBehaviorsOfUser JOIN partners ON partner_id = partners.id) as PartnersOfOneOffBehaviorsOfUserWithoutBehaviorsTheyreMonitoring JOIN one_off_behaviors ON one_off_behavior_id = one_off_behaviors.id', [id])
         // responseObject['prtnrsWhoMonitorOneOffBhs'] = toCamelCase(queryForPrtnrsWhoMonitorOneOffBhs.rows)
         const prtnrsWhoMonitorOneOffBhsWithDuplicates = toCamelCase(queryForPrtnrsWhoMonitorOneOffBhs.rows)
 
@@ -132,7 +132,7 @@ class UsersRepository {
         // // AFTER: gets partners but not the bhs they're monitoring which is what we want
 
         const queryForPrtnrsWhoMonitorRepeatedBhs = await pool.query(
-            'SELECT relationship, email, report_frequency, status, repeated_behaviors.name FROM (SELECT repeated_behavior_id, relationship, email, report_frequency, status FROM (SELECT partner_id, repeated_behavior_id FROM repeated_behaviors_users_partners WHERE user_id = $1) as idOfPartnersOfRepeatedBehaviorsOfUser JOIN partners ON partner_id = partners.id) as PartnersOfRepeatedBehaviorsOfUserWithoutBehaviorsTheyreMonitoring JOIN repeated_behaviors ON repeated_behavior_id = repeated_behaviors.id ', [id])
+            'SELECT partner_id, relationship, email, report_frequency, status, repeated_behaviors.name FROM (SELECT partner_id, repeated_behavior_id, relationship, email, report_frequency, status FROM (SELECT partner_id, repeated_behavior_id FROM repeated_behaviors_users_partners WHERE user_id = $1) as idOfPartnersOfRepeatedBehaviorsOfUser JOIN partners ON partner_id = partners.id) as PartnersOfRepeatedBehaviorsOfUserWithoutBehaviorsTheyreMonitoring JOIN repeated_behaviors ON repeated_behavior_id = repeated_behaviors.id ', [id])
         // responseObject['prtnrsWhoMonitorRepeatedBhs'] = toCamelCase(queryForPrtnrsWhoMonitorRepeatedBhs.rows)
         const prtnrsWhoMonitorRepeatedBhsWithDuplicates = toCamelCase(queryForPrtnrsWhoMonitorRepeatedBhs.rows)
 
@@ -153,7 +153,22 @@ class UsersRepository {
         return responseObject
     }
 
-    
+    static async deletePrtnrOfUser(id, partnerId){
+        // console.log(id, partnerId)
+        // 1. need to delete all foreign key references (which are in the 2 bridge tables) before you are able to delete the partner -> sql doesn't let you to refer to something that doesn't exist
+        await pool.query('UPDATE repeated_behaviors_users_partners SET partner_id = null WHERE user_id = $1 AND partner_id = $2', [id, partnerId])
+        await pool.query('UPDATE one_off_behaviors_users_partners SET partner_id = null WHERE user_id = $1 AND partner_id = $2', [id, partnerId])
+        // 2. actually deleting the partner
+        const { rows } = await pool.query('DELETE FROM partners WHERE id = $1 RETURNING *', [partnerId])
+        return rows[0]
+    }
+
+    static async getPrtnrOfUser(partnerId){
+        const { rows } = await pool.query('SELECT * FROM partners WHERE id = $1', [partnerId])
+        return rows[0]
+    }
+
+
 
 }
 

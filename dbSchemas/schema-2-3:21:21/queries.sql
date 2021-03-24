@@ -30,7 +30,7 @@ JOIN one_off_behaviors ON one_off_behavior_id = one_off_behaviors.id
 
 -- pt2: get all 1 off behaviors of user
 -- https://www.sqlbook.com/sql/sql-distinct-how-to-use/
-SELECT DISTINCT name, marker 
+SELECT DISTINCT one_off_behaviors.id, name, marker
 FROM (SELECT one_off_behavior_id
 FROM one_off_behaviors_users_partners
 WHERE user_id = 1) as idOfOneOffBehaviorsOfUser
@@ -52,11 +52,24 @@ JOIN partners ON partner_id = partners.id) as PartnersOfRepeatedBehaviorsOfUserW
 JOIN repeated_behaviors ON repeated_behavior_id = repeated_behaviors.id 
 
 -- pt4: get all repeated behaviors of user
-SELECT DISTINCT name, marker, frequency, amount
+SELECT DISTINCT repeated_behaviors.id, name, marker, frequency, amount
 FROM (SELECT repeated_behavior_id
 FROM repeated_behaviors_users_partners
 WHERE user_id = 1) as idOfRepeatedBehaviorsOfUser
 JOIN repeated_behaviors on repeated_behavior_id = repeated_behaviors.id
+
+
+-- QUERIES BELOW THIS LINE START CHANGING THE DB.... SO YOU MIGHT CONSIDER JUST RESETTING DB BY DELETING IT AND THEN RECREATING IT USING "FAP - financial accountability partner" + "seeding data.sql" FILE 
+
+--pt5: delete a partner of a user
+-- first deleting the foreign key references to that partner
+UPDATE repeated_behaviors_users_partners 
+SET partner_id = null WHERE user_id = 1 AND partner_id = 1
+
+UPDATE one_off_behaviors_users_partners 
+SET partner_id = null WHERE user_id = 1 AND partner_id = 1
+-- then deleting the partner
+DELETE FROM partners WHERE id = 1 RETURNING *
 
 
 
