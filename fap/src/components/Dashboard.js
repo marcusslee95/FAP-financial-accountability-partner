@@ -66,7 +66,7 @@ const Behaviors = (props) => {
         switch(bh.name) {
             case 'Open a High-Yield Savings Account':
                 return (
-                    <div key={bh.name}>
+                    <div key={bh.id}>
                         Name: {bh.name} and Marker: {markerCircle}<button onClick={() => { //if someone clicks delete then delete this behavior
                         const bhsMinusbhToBeDeleted = oneOffBehaviors.filter(behavior => behavior.name !== bh.name) //https://stackoverflow.com/questions/5767325/how-can-i-remove-a-specific-item-from-an-array
                         // console.log(bhsMinusbhToBeDeleted) 
@@ -76,7 +76,7 @@ const Behaviors = (props) => {
                 )
             case 'Do Your Taxes':
                 return (
-                    <div key={bh.name}>
+                    <div key={bh.id}>
                         Name: {bh.name} and Marker: {markerCircle}<button onClick={() => { //if someone clicks delete then delete this behavior
                         const bhsMinusbhToBeDeleted = oneOffBehaviors.filter(behavior => behavior.name !== bh.name) //https://stackoverflow.com/questions/5767325/how-can-i-remove-a-specific-item-from-an-array
                         // console.log(bhsMinusbhToBeDeleted) 

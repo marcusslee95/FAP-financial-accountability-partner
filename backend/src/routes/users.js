@@ -81,4 +81,12 @@ router.get('/users/:id', async (req, res) => {
 })
 //AFTER: using approach 2 in queries.sql
 
+// router.delete('/users/:userId/oneOffBehaviors/:behaviorId', async (req, res) => {
+//     const { userId, behaviorId } = req.params
+//     console.log(userId, behaviorId)
+
+//     const deletedBh = await UsersRepository.deleteBhOfUser(userId, behaviorId) //this will be the bh you just deleted
+//     console.log(deletedBh)
+// })
+
 module.exports = router
