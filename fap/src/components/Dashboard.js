@@ -6,11 +6,15 @@ import axios from 'axios'
 
 const Dashboard = () => {
     const history = useHistory()
+    const [ causeStateInPrtnrsComponentWithARerender, setChangeStateInPrtnrsComponent ] = useState(false)
+
     return (
         <Fragment>
             <div>Logo</div>
-            <Behaviors history={history}/>
-            <Partners history={history}/>
+            <Behaviors history={history} 
+            tellPartnersComponentGetPrtnrsAgain={setChangeStateInPrtnrsComponent} conditionalValue={causeStateInPrtnrsComponentWithARerender}/>
+            <Partners history={history} 
+            indicatorThatIShouldGetPrtnrsAgain={causeStateInPrtnrsComponentWithARerender} tellMyselfToGetPrtnrsAgain={setChangeStateInPrtnrsComponent}/>
         </Fragment>
     )
 }
@@ -68,9 +72,18 @@ const Behaviors = (props) => {
                 return (
                     <div key={bh.id}>
                         Name: {bh.name} and Marker: {markerCircle}<button onClick={() => { //if someone clicks delete then delete this behavior
-                        const bhsMinusbhToBeDeleted = oneOffBehaviors.filter(behavior => behavior.name !== bh.name) //https://stackoverflow.com/questions/5767325/how-can-i-remove-a-specific-item-from-an-array
-                        // console.log(bhsMinusbhToBeDeleted) 
-                        setOneOffBhs(bhsMinusbhToBeDeleted)
+                        axios.delete(`http://localhost:4000/users/1/oneOffBehaviors/${bh.id}`)
+                        .then((res) => {//after we deleted the partner from the db.... we can just update state directly because.. - so long as we're sure the deletion was successful on db - it's wasteful to get all the partners again from db.... just subtract the deletedPartner from the state
+                            const deletedBh = res.data
+                            console.log(deletedBh)
+        
+                            const OneOffBhsMinusOneOffBhToBeDeleted = oneOffBehaviors.filter(oneOffBh => oneOffBh.id !== deletedBh.id)
+                            // console.log(OneOffBhsMinusOneOffBhToBeDeleted)
+                            setOneOffBhs(OneOffBhsMinusOneOffBhToBeDeleted)
+
+                            //TODO: cause partners component to rerender with potentially fewer partners since we deleted them from db if no longer monitoring bhs
+                            props.tellPartnersComponentGetPrtnrsAgain(!props.conditionalValue)
+                        })
                         }}>Delete</button>
                     </div>
                 )
@@ -78,9 +91,15 @@ const Behaviors = (props) => {
                 return (
                     <div key={bh.id}>
                         Name: {bh.name} and Marker: {markerCircle}<button onClick={() => { //if someone clicks delete then delete this behavior
-                        const bhsMinusbhToBeDeleted = oneOffBehaviors.filter(behavior => behavior.name !== bh.name) //https://stackoverflow.com/questions/5767325/how-can-i-remove-a-specific-item-from-an-array
-                        // console.log(bhsMinusbhToBeDeleted) 
-                        setOneOffBhs(bhsMinusbhToBeDeleted)
+                        axios.delete(`http://localhost:4000/users/1/oneOffBehaviors/${bh.id}`)
+                        .then((res) => {//after we deleted the partner from the db.... we can just update state directly because.. - so long as we're sure the deletion was successful on db - it's wasteful to get all the partners again from db.... just subtract the deletedPartner from the state
+                            const deletedBh = res.data
+                            console.log(deletedBh)
+        
+                            const OneOffBhsMinusOneOffBhToBeDeleted = oneOffBehaviors.filter(oneOffBh => oneOffBh.id !== deletedBh.id)
+                            // console.log(OneOffBhsMinusOneOffBhToBeDeleted)
+                            setOneOffBhs(OneOffBhsMinusOneOffBhToBeDeleted)
+                        })
                         }}>Delete</button>
                     </div>
                 )
@@ -156,6 +175,7 @@ const Behaviors = (props) => {
 
     return (
     <div>
+        {/* <div onClick={() => props.tellPartnersComponentGetPrtnrsAgain(props.conditionalValue + '1')}>TEST</div> */}
         Behaviors
         {oneOffBhsInUI}
         {repeatedBhsInUI}
@@ -174,7 +194,8 @@ const Partners = (props) => {
                 console.log(prtnrsWhoMonitorRepeatedBhs)
                 setPrtnrs([...prtnrsWhoMonitorOneOffBhs, ...prtnrsWhoMonitorRepeatedBhs])
             })
-    }, [] )
+    }, [props.indicatorThatIShouldGetPrtnrsAgain] // React compares the current values in 2nd argument and the value on previous render. If they are not the same, effect is invoked. https://dev.to/nibble/what-is-useeffect-hook-and-how-do-you-use-it-1p9c#:~:text=Second%20argument%20to%20useEffect,-The%20second%20argument&text=React%20compares%20the%20current%20value,be%20executed%20after%20every%20render.
+    )
 
     const prtnsInUI = prtnrs.map((prtnr) => {
         return (
@@ -186,13 +207,18 @@ const Partners = (props) => {
                 //delete them from the db
                 // axios.get(`http://localhost:4000/partners/${prtnr.partnerId}`)
                 axios.delete(`http://localhost:4000/users/1/partners/${prtnr.partnerId}`)
-                .then((res) => {//after we deleted the partner from the db.... we can just update state directly because.. - so long as we're sure the deletion was successful on db - it's wasteful to get all the partners again from db.... just subtract the deletedPartner from the state
-                    const deletedPrtnr = res.data
-                    console.log(deletedPrtnr)
+                .then((res) => {//after we deleted the partner from the db.... get the partners again to get new list of partners besides the one we just deleted
+                    props.tellMyselfToGetPrtnrsAgain(!props.indicatorThatIShouldGetPrtnrsAgain)
 
-                    const prtnrsMinusPrtnrToBeDeleted = prtnrs.filter(partner => partner.partnerId !== deletedPrtnr.id)
-                    // console.log(prtnrsMinusPrtnrToBeDeleted)
-                    setPrtnrs(prtnrsMinusPrtnrToBeDeleted)
+                    //B4: figured out how to useEffect properly to get partners when I made some change to the partners - ie added or deleted a partner
+                    // const deletedPrtnr = res.data
+                    // console.log(deletedPrtnr)
+
+                    // const prtnrsMinusPrtnrToBeDeleted = prtnrs.filter(partner => partner.partnerId !== deletedPrtnr.id)
+                    // // console.log(prtnrsMinusPrtnrToBeDeleted)
+                    // setPrtnrs(prtnrsMinusPrtnrToBeDeleted)
+                    //AFTER: figured out how to useEffect properly to get partners when I made some change to the partners - ie added or deleted a partner
+
                 })
             }}>Delete</button>
         </div>

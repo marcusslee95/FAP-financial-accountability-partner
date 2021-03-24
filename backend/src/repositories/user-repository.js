@@ -168,6 +168,34 @@ class UsersRepository {
         return rows[0]
     }
 
+    static async deleteOneOffBhOfUser(userId, behaviorId){
+        //1. need to delete all bridge table rows of that behavior
+        const queryResult = await pool.query('DELETE FROM one_off_behaviors_users_partners WHERE user_id = $1 AND one_off_behavior_id = $2 RETURNING partner_id', [userId, behaviorId])
+        //2. we might have just deleted the last behavior some partner was monitoring -> if we did... we want to delete that partner because no need to have accountability partner to monitor no behavior -> how to know when partners no longer monitor any behaviors... 
+            //You'll know when the partner no longer makes any appearances in either of the two bridge tables
+            //1st: find which partners were monitoring the behavior we just deleted - other partners we know are guaranteed to be monitoring some behavior so no need to consider deleting them whereas partners who's behavior we just deleted.... that might have been the last behavior they monitored
+            //2nd: check both bridge tables to see if those partners from step 1 have 0 occurrences in both tables.... if so it means they aren't monitoring anything 
+            //3rd: go ahead and delete those partners from the partners table
+        const idsOfPrtnrsWhoMonitoredBhWeJustDeletedSoTheresChanceThesePrtnrsNoLongerMonitorAnyBhs = queryResult.rows // [ { partner_id: 2 }, { partner_id: 3 } ]
+        // console.log(idsOfPrtnrsWhoMonitoredBhWeJustDeletedSoTheresChanceThesePrtnrsNoLongerMonitorAnyBhs) 
+        idsOfPrtnrsWhoMonitoredBhWeJustDeletedSoTheresChanceThesePrtnrsNoLongerMonitorAnyBhs.forEach( async (id) => {
+            const actualPartnerId = id.partner_id
+            const queryToSeeIfPrtnrMonitorsAnyOneOffBhs = await pool.query('SELECT * FROM one_off_behaviors_users_partners WHERE partner_id = $1', [actualPartnerId])
+            console.log(queryToSeeIfPrtnrMonitorsAnyOneOffBhs.rows)
+            const queryToSeeIfPrtnrMonitorsAnyRepeatedBhs = await pool.query('SELECT * FROM repeated_behaviors_users_partners WHERE partner_id = $1', [actualPartnerId])
+            console.log(queryToSeeIfPrtnrMonitorsAnyRepeatedBhs.rows)
+
+            if (queryToSeeIfPrtnrMonitorsAnyOneOffBhs.rows.length === 0 && queryToSeeIfPrtnrMonitorsAnyRepeatedBhs.rows.length === 0 ){ //this partner no longer monitors any behaviors so we should delete them
+                await pool.query('DELETE FROM partners WHERE id = $1', [actualPartnerId])
+            }
+        })
+  
+        // 3. actually deleting the behavior
+        const queryToDeleteTheBh = await pool.query('DELETE FROM one_off_behaviors WHERE id = $1 RETURNING *', [behaviorId])
+        console.log(queryToDeleteTheBh.rows)
+        return queryToDeleteTheBh.rows[0]
+    }
+
 
 
 }

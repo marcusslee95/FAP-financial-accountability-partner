@@ -94,17 +94,18 @@ router.get('/partners/:partnerId', async (req, res) => {
     const { partnerId } = req.params
     console.log(partnerId)
 
-    const deletedPrtnr = await UsersRepository.getPrtnrOfUser(partnerId)
-    console.log(deletedPrtnr)
-    res.status(201).send(deletedPrtnr)
+    const prtnr = await UsersRepository.getPrtnrOfUser(partnerId)
+    console.log(prtnr)
+    res.send(prtnr)
 })
 
-// router.delete('/users/:userId/oneOffBehaviors/:behaviorId', async (req, res) => {
-//     const { userId, behaviorId } = req.params
-//     console.log(userId, behaviorId)
+router.delete('/users/:userId/oneOffBehaviors/:behaviorId', async (req, res) => {
+    const { userId, behaviorId } = req.params
+    // console.log(userId, behaviorId)
 
-//     const deletedBh = await UsersRepository.deleteBhOfUser(userId, behaviorId) //this will be the bh you just deleted
-//     console.log(deletedBh)
-// })
+    const deletedBh = await UsersRepository.deleteOneOffBhOfUser(userId, behaviorId) //this will be the bh you just deleted
+    // console.log(deletedBh)
+    res.status(201).send(deletedBh)
+})
 
 module.exports = router
