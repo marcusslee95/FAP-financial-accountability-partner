@@ -29,6 +29,7 @@ const Behaviors = (props) => {
     // ])
     const [ oneOffBehaviors, setOneOffBhs ] = useState([])
     const [ repeatedBehaviors, setRepeatedBhs ] = useState([])
+    const [ indicatorThatIShouldGetBhsAgain, tellMyselfToGetBhsAgain ] = useState(false)
 
     useEffect(() => { // executes code inside after component renders - https://reactjs.org/docs/hooks-effect.html
         // axios.get('http://localhost:4000/testRoute1').then(res => console.log(res))
@@ -41,7 +42,7 @@ const Behaviors = (props) => {
                 setOneOffBhs([...oneOffBhs])
                 setRepeatedBhs([...repeatedBhs])
             })
-    }, [] // empty array is to have it not do it's default behavior of running the code everytime we render - cuz in that case it would be componentdidupate - and if we update state we'll be rerendering the component which would cause code to execute causing another state change and rerender... infinite... - https://stackoverflow.com/questions/56249151/react-useeffect-hook-componentdidmount-to-useeffect
+    }, [indicatorThatIShouldGetBhsAgain] // React compares the current values in 2nd argument and the value on previous render. If they are not the same, effect is invoked. https://dev.to/nibble/what-is-useeffect-hook-and-how-do-you-use-it-1p9c#:~:text=Second%20argument%20to%20useEffect,-The%20second%20argument&text=React%20compares%20the%20current%20value,be%20executed%20after%20every%20render.
     )
 
     const oneOffBhsInUI = oneOffBehaviors.map((bh) => {
@@ -74,14 +75,18 @@ const Behaviors = (props) => {
                         Name: {bh.name} and Marker: {markerCircle}<button onClick={() => { //if someone clicks delete then delete this behavior
                         axios.delete(`http://localhost:4000/users/1/oneOffBehaviors/${bh.id}`)
                         .then((res) => {//after we deleted the partner from the db.... we can just update state directly because.. - so long as we're sure the deletion was successful on db - it's wasteful to get all the partners again from db.... just subtract the deletedPartner from the state
-                            const deletedBh = res.data
-                            console.log(deletedBh)
-        
-                            const OneOffBhsMinusOneOffBhToBeDeleted = oneOffBehaviors.filter(oneOffBh => oneOffBh.id !== deletedBh.id)
-                            // console.log(OneOffBhsMinusOneOffBhToBeDeleted)
-                            setOneOffBhs(OneOffBhsMinusOneOffBhToBeDeleted)
+                            tellMyselfToGetBhsAgain(!indicatorThatIShouldGetBhsAgain)
 
-                            //TODO: cause partners component to rerender with potentially fewer partners since we deleted them from db if no longer monitoring bhs
+                            // //B4: leveraged 2nd argument in use effect to execute bhs fetching code when we want to 
+                            // const deletedBh = res.data
+                            // console.log(deletedBh)
+        
+                            // const OneOffBhsMinusOneOffBhToBeDeleted = oneOffBehaviors.filter(oneOffBh => oneOffBh.id !== deletedBh.id)
+                            // // console.log(OneOffBhsMinusOneOffBhToBeDeleted)
+                            // setOneOffBhs(OneOffBhsMinusOneOffBhToBeDeleted)
+                            // //AFTER: leveraged 2nd argument in use effect to execute bhs fetching code when we want to 
+
+                            //cause partners component to fetch partners again because there might be potentially fewer partners since we deleted them from db if no longer monitoring bhs
                             props.tellPartnersComponentGetPrtnrsAgain(!props.conditionalValue)
                         })
                         }}>Delete</button>
@@ -92,13 +97,10 @@ const Behaviors = (props) => {
                     <div key={bh.id}>
                         Name: {bh.name} and Marker: {markerCircle}<button onClick={() => { //if someone clicks delete then delete this behavior
                         axios.delete(`http://localhost:4000/users/1/oneOffBehaviors/${bh.id}`)
-                        .then((res) => {//after we deleted the partner from the db.... we can just update state directly because.. - so long as we're sure the deletion was successful on db - it's wasteful to get all the partners again from db.... just subtract the deletedPartner from the state
-                            const deletedBh = res.data
-                            console.log(deletedBh)
-        
-                            const OneOffBhsMinusOneOffBhToBeDeleted = oneOffBehaviors.filter(oneOffBh => oneOffBh.id !== deletedBh.id)
-                            // console.log(OneOffBhsMinusOneOffBhToBeDeleted)
-                            setOneOffBhs(OneOffBhsMinusOneOffBhToBeDeleted)
+                        .then((res) => {
+                            tellMyselfToGetBhsAgain(!indicatorThatIShouldGetBhsAgain)
+
+                            props.tellPartnersComponentGetPrtnrsAgain(!props.conditionalValue)
                         })
                         }}>Delete</button>
                     </div>
@@ -139,9 +141,9 @@ const Behaviors = (props) => {
                 return (
                     <div key={bh.name}>
                         Name: {bh.name} and Marker: {markerCircles}<button onClick={() => { //if someone clicks delete then delete this behavior
-                        const bhsMinusbhToBeDeleted = repeatedBehaviors.filter(behavior => behavior.name !== bh.name) 
-                        // console.log(bhsMinusbhToBeDeleted) 
-                        setRepeatedBhs(bhsMinusbhToBeDeleted)
+                            tellMyselfToGetBhsAgain(!indicatorThatIShouldGetBhsAgain)
+
+                            props.tellPartnersComponentGetPrtnrsAgain(!props.conditionalValue)
                         }}>Delete</button>
                     </div>
                 )
@@ -149,9 +151,9 @@ const Behaviors = (props) => {
                 return (
                     <div key={bh.name}>
                         Name: {bh.name} and Amount: {bh.amount} and Frequency: {bh.frequency} Marker: {markerCircles}<button onClick={() => { //if someone clicks delete then delete this behavior
-                        const bhsMinusbhToBeDeleted = repeatedBehaviors.filter(behavior => behavior.name !== bh.name) 
-                        // console.log(bhsMinusbhToBeDeleted) 
-                        setRepeatedBhs(bhsMinusbhToBeDeleted)
+                            tellMyselfToGetBhsAgain(!indicatorThatIShouldGetBhsAgain)
+
+                            props.tellPartnersComponentGetPrtnrsAgain(!props.conditionalValue)
                         }}>Delete</button>
                     </div>
                 )
@@ -159,9 +161,9 @@ const Behaviors = (props) => {
                 return (
                     <div key={bh.name}>
                         Name: {bh.name} and Amount: {bh.amount} and Frequency: {bh.frequency} Marker: {markerCircles}<button onClick={() => { //if someone clicks delete then delete this behavior
-                        const bhsMinusbhToBeDeleted = repeatedBehaviors.filter(behavior => behavior.name !== bh.name) 
-                        // console.log(bhsMinusbhToBeDeleted) 
-                        setRepeatedBhs(bhsMinusbhToBeDeleted)
+                            tellMyselfToGetBhsAgain(!indicatorThatIShouldGetBhsAgain)
+
+                            props.tellPartnersComponentGetPrtnrsAgain(!props.conditionalValue)
                         }}>Delete</button>
                     </div>
                 )
