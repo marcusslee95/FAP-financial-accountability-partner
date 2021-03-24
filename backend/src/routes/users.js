@@ -108,4 +108,13 @@ router.delete('/users/:userId/oneOffBehaviors/:behaviorId', async (req, res) => 
     res.status(201).send(deletedBh)
 })
 
+router.delete('/users/:userId/repeatedBehaviors/:behaviorId', async (req, res) => {
+    const { userId, behaviorId } = req.params
+    // console.log(userId, behaviorId)
+
+    const deletedBh = await UsersRepository.deleteRepeatedBhOfUser(userId, behaviorId) //this will be the bh you just deleted
+    // console.log(deletedBh)
+    res.status(201).send(deletedBh)
+})
+
 module.exports = router

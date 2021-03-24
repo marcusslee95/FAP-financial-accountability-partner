@@ -196,6 +196,29 @@ class UsersRepository {
         return queryToDeleteTheBh.rows[0]
     }
 
+    static async deleteRepeatedBhOfUser(userId, behaviorId){
+        const queryResult = await pool.query('DELETE FROM repeated_behaviors_users_partners WHERE user_id = $1 AND repeated_behavior_id = $2 RETURNING partner_id', [userId, behaviorId])
+
+        const idsOfPrtnrsWhoMonitoredBhWeJustDeletedSoTheresChanceThesePrtnrsNoLongerMonitorAnyBhs = queryResult.rows // [ { partner_id: 2 }, { partner_id: 3 } ]
+        // console.log(idsOfPrtnrsWhoMonitoredBhWeJustDeletedSoTheresChanceThesePrtnrsNoLongerMonitorAnyBhs) 
+        idsOfPrtnrsWhoMonitoredBhWeJustDeletedSoTheresChanceThesePrtnrsNoLongerMonitorAnyBhs.forEach( async (id) => {
+            const actualPartnerId = id.partner_id
+            const queryToSeeIfPrtnrMonitorsAnyOneOffBhs = await pool.query('SELECT * FROM one_off_behaviors_users_partners WHERE partner_id = $1', [actualPartnerId])
+            console.log(queryToSeeIfPrtnrMonitorsAnyOneOffBhs.rows)
+            const queryToSeeIfPrtnrMonitorsAnyRepeatedBhs = await pool.query('SELECT * FROM repeated_behaviors_users_partners WHERE partner_id = $1', [actualPartnerId])
+            console.log(queryToSeeIfPrtnrMonitorsAnyRepeatedBhs.rows)
+
+            if (queryToSeeIfPrtnrMonitorsAnyOneOffBhs.rows.length === 0 && queryToSeeIfPrtnrMonitorsAnyRepeatedBhs.rows.length === 0 ){ //this partner no longer monitors any behaviors so we should delete them
+                await pool.query('DELETE FROM partners WHERE id = $1', [actualPartnerId])
+            }
+        })
+  
+        // 3. actually deleting the behavior
+        const queryToDeleteTheBh = await pool.query('DELETE FROM repeated_behaviors WHERE id = $1 RETURNING *', [behaviorId])
+        console.log(queryToDeleteTheBh.rows)
+        return queryToDeleteTheBh.rows[0]
+    }
+
 
 
 }

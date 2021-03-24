@@ -109,7 +109,7 @@ const Behaviors = (props) => {
             //   // code block
             //   break;
             default:
-                return <div key={bh.name}>uncaught exception</div>
+                return <div key={bh.id}>uncaught exception</div>
         }
     })
 
@@ -139,31 +139,40 @@ const Behaviors = (props) => {
         switch(bh.name) {
             case 'Opening a 529':
                 return (
-                    <div key={bh.name}>
+                    <div key={bh.id}>
                         Name: {bh.name} and Marker: {markerCircles}<button onClick={() => { //if someone clicks delete then delete this behavior
-                            tellMyselfToGetBhsAgain(!indicatorThatIShouldGetBhsAgain)
-
-                            props.tellPartnersComponentGetPrtnrsAgain(!props.conditionalValue)
+                            axios.delete(`http://localhost:4000/users/1/repeatedBehaviors/${bh.id}`)
+                            .then((res) => {
+                                tellMyselfToGetBhsAgain(!indicatorThatIShouldGetBhsAgain)
+    
+                                props.tellPartnersComponentGetPrtnrsAgain(!props.conditionalValue)
+                            })
                         }}>Delete</button>
                     </div>
                 )
             case 'send money to grandma':
                 return (
-                    <div key={bh.name}>
+                    <div key={bh.id}>
                         Name: {bh.name} and Amount: {bh.amount} and Frequency: {bh.frequency} Marker: {markerCircles}<button onClick={() => { //if someone clicks delete then delete this behavior
-                            tellMyselfToGetBhsAgain(!indicatorThatIShouldGetBhsAgain)
-
-                            props.tellPartnersComponentGetPrtnrsAgain(!props.conditionalValue)
+                            axios.delete(`http://localhost:4000/users/1/repeatedBehaviors/${bh.id}`)
+                            .then((res) => {
+                                tellMyselfToGetBhsAgain(!indicatorThatIShouldGetBhsAgain)
+    
+                                props.tellPartnersComponentGetPrtnrsAgain(!props.conditionalValue)
+                            })
                         }}>Delete</button>
                     </div>
                 )
             case 'send money to parents':
                 return (
-                    <div key={bh.name}>
+                    <div key={bh.id}>
                         Name: {bh.name} and Amount: {bh.amount} and Frequency: {bh.frequency} Marker: {markerCircles}<button onClick={() => { //if someone clicks delete then delete this behavior
-                            tellMyselfToGetBhsAgain(!indicatorThatIShouldGetBhsAgain)
-
-                            props.tellPartnersComponentGetPrtnrsAgain(!props.conditionalValue)
+                            axios.delete(`http://localhost:4000/users/1/repeatedBehaviors/${bh.id}`)
+                            .then((res) => {
+                                tellMyselfToGetBhsAgain(!indicatorThatIShouldGetBhsAgain)
+    
+                                props.tellPartnersComponentGetPrtnrsAgain(!props.conditionalValue)
+                            })
                         }}>Delete</button>
                     </div>
                 )
@@ -171,7 +180,7 @@ const Behaviors = (props) => {
             //   // code block
             //   break;
             default:
-                return <div key={bh.name}>uncaught exception</div>
+                return <div key={bh.id}>uncaught exception</div>
         }
     })
 
