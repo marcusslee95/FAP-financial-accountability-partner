@@ -117,4 +117,26 @@ router.delete('/users/:userId/repeatedBehaviors/:behaviorId', async (req, res) =
     res.status(201).send(deletedBh)
 })
 
+router.post('/users/:userId/oneOffBehaviors', async (req, res) => {
+    const { userId } = req.params
+    // console.log(userId)
+    // console.log(req.body)
+    const newBh = req.body
+
+    const newlyAddedBh = await UsersRepository.addAOneOffBhForUser(userId, newBh) 
+
+    //ToDo - send back some response to user
+    res.status(200).send(newlyAddedBh)
+})
+
+router.post('/users/:userId/repeatedBehaviors', async (req, res) => {
+    const { userId } = req.params
+    // console.log(userId)
+    // console.log(req.body)
+    const newBh = req.body
+
+    const newlyAddedBh = await UsersRepository.addARepeatedBhForUser(userId, newBh) 
+    res.status(200).send(newlyAddedBh)
+})
+
 module.exports = router

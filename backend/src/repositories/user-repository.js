@@ -219,6 +219,24 @@ class UsersRepository {
         return queryToDeleteTheBh.rows[0]
     }
 
+    static async addAOneOffBhForUser(userId, newBh){
+        const queryResult = await pool.query('INSERT INTO one_off_behaviors (name, marker) VALUES ($1, $2) RETURNING *', [newBh.name, newBh.marker])
+        // console.log(queryResult.rows)
+        const newlyAddedBh = queryResult.rows[0]
+        
+        await pool.query('INSERT INTO one_off_behaviors_users_partners (one_off_behavior_id, user_id) VALUES ($2, $1) RETURNING *', [userId, newlyAddedBh.id]) //insert row into bridge table too showing that this new bh is of a certain user
+        return newlyAddedBh
+    }
+
+    static async addARepeatedBhForUser(userId, newBh){
+        const queryResult = await pool.query('INSERT INTO repeated_behaviors (name, marker, frequency, amount) VALUES ($1, $2, $3, $4) RETURNING *', 
+        [newBh.name, newBh.marker, newBh.frequency, newBh.amount])
+        // console.log(queryResult.rows)
+        const newlyAddedBh = queryResult.rows[0]
+        await pool.query('INSERT INTO repeated_behaviors_users_partners (repeated_behavior_id, user_id) VALUES ($2, $1) RETURNING *', [userId, newlyAddedBh.id]) //insert row into bridge table too showing that this new bh is of a certain user
+        return newlyAddedBh
+    }
+
 
 
 }

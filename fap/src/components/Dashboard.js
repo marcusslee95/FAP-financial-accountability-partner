@@ -105,6 +105,19 @@ const Behaviors = (props) => {
                         }}>Delete</button>
                     </div>
                 )
+            case 'Opening a 529':
+                return (
+                    <div key={bh.id}>
+                        Name: {bh.name} and Marker: {markerCircle}<button onClick={() => { //if someone clicks delete then delete this behavior
+                        axios.delete(`http://localhost:4000/users/1/oneOffBehaviors/${bh.id}`)
+                        .then((res) => {
+                            tellMyselfToGetBhsAgain(!indicatorThatIShouldGetBhsAgain)
+
+                            props.tellPartnersComponentGetPrtnrsAgain(!props.conditionalValue)
+                        })
+                        }}>Delete</button>
+                    </div>
+                )
             // case y:
             //   // code block
             //   break;
@@ -137,7 +150,33 @@ const Behaviors = (props) => {
             }}></span> 
         )
         switch(bh.name) {
-            case 'Opening a 529':
+            case 'Consistent Investing':
+                return (
+                    <div key={bh.id}>
+                        Name: {bh.name} and Marker: {markerCircles}<button onClick={() => { //if someone clicks delete then delete this behavior
+                            axios.delete(`http://localhost:4000/users/1/repeatedBehaviors/${bh.id}`)
+                            .then((res) => {
+                                tellMyselfToGetBhsAgain(!indicatorThatIShouldGetBhsAgain)
+    
+                                props.tellPartnersComponentGetPrtnrsAgain(!props.conditionalValue)
+                            })
+                        }}>Delete</button>
+                    </div>
+                )
+            case 'Contributing to 401k':
+                return (
+                    <div key={bh.id}>
+                        Name: {bh.name} and Marker: {markerCircles}<button onClick={() => { //if someone clicks delete then delete this behavior
+                            axios.delete(`http://localhost:4000/users/1/repeatedBehaviors/${bh.id}`)
+                            .then((res) => {
+                                tellMyselfToGetBhsAgain(!indicatorThatIShouldGetBhsAgain)
+    
+                                props.tellPartnersComponentGetPrtnrsAgain(!props.conditionalValue)
+                            })
+                        }}>Delete</button>
+                    </div>
+                )
+            case 'Depositing $ Into Your Account':
                 return (
                     <div key={bh.id}>
                         Name: {bh.name} and Marker: {markerCircles}<button onClick={() => { //if someone clicks delete then delete this behavior
