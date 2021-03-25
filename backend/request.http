@@ -28,6 +28,40 @@ DELETE http://localhost:4000/users/1/oneOffBehaviors/1 HTTP/1.1
 content-type: application/json
 
 
+### Add a oneOffbh to a user
+POST http://localhost:4000/users/1/oneOffBehaviors HTTP/1.1
+content-type: application/json
+
+{
+    "name": "Opening a 529",
+    "marker": false
+}
+
+### Add a repeatedBh to a user
+POST http://localhost:4000/users/1/repeatedBehaviors HTTP/1.1
+content-type: application/json
+
+{
+    "name": "Depositing $ Into Your Account",
+    "marker": [
+        false2
+    ],
+    "frequency": "annually",
+    "amount": "111"
+}
+
+### Add a prtnr to a user
+POST http://localhost:4000/users/1/partners HTTP/1.1
+content-type: application/json
+
+{
+    "relationship": "Stranger",
+    "email": "wallEgf@outerspace.com",
+    "reportFrequency": "monthly",
+    "status": "not yet accepted",
+    "behaviorsMonitoring": [{ "type": "oneOff", "name": "Opening a 529", "id": 22} , { "type": "repeated", "name": "Contributing to 401k", "id": 19}]
+}
+
 ###
 
 http://localhost:4000/testRoute1

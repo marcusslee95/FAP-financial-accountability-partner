@@ -62,11 +62,12 @@ const AddBehavior = () => {
                 //     2nd: knowing whether user chose to add a 1offBh or a repeatedBh -> as that will decide what endpoint we'll hit... either /oneOffBehaviors or /repeatedBehaviors
                 if (userChoosesToAddAOneOffBh){
                     const newBH = { name: selectedOption, marker: false }
-                    // console.log(newBH)
+                    console.log(newBH)
                     await axios.post('http://localhost:4000/users/1/oneOffBehaviors', newBH).then(res => console.log(res.data)) //use await cuz don't want to run code below where go back to dashboard page before adding bh to db finishes
                 } 
                 else if (userChoosesToAddARepeatedBh) {
                     const newBH = { name: selectedOption, marker: [false], frequency: frequencyForWhenUserChoosesToAddARepeatedBh, amount: amountForWhenUserChoosesToAddARepeatedBh} 
+                    console.log(newBH)
                     await axios.post('http://localhost:4000/users/1/repeatedBehaviors', newBH).then(res => console.log(res.data)) 
                 }
                 history.push('/dashboard')

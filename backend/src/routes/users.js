@@ -139,4 +139,14 @@ router.post('/users/:userId/repeatedBehaviors', async (req, res) => {
     res.status(200).send(newlyAddedBh)
 })
 
+router.post('/users/:userId/partners', async (req, res) => {
+    const { userId } = req.params
+    console.log(userId)
+    // console.log(req.body)
+    const newPrtnr = req.body
+
+    const newlyAddedPrtnr = await UsersRepository.addAPartnerToAUser(userId, newPrtnr) 
+    res.status(200).send(newlyAddedPrtnr)
+})
+
 module.exports = router

@@ -237,6 +237,30 @@ class UsersRepository {
         return newlyAddedBh
     }
 
+    static async addAPartnerToAUser(userId, newPrtnr){
+        const queryResult = await pool.query('INSERT INTO partners (relationship, email, report_frequency, status) VALUES ($1, $2, $3, $4) RETURNING *', 
+        [newPrtnr.relationship, newPrtnr.email, newPrtnr.reportFrequency, newPrtnr.status])
+        // // console.log(queryResult.rows)
+        const newlyAddedPrtnr = queryResult.rows[0]
+        // console.log(newlyAddedPrtnr)
+        // console.log(newPrtnr)
+
+        newPrtnr.behaviorsMonitoring.forEach( async (bhWantThisPrtnrToMonitor) => {
+            //create connection in one of the two bridge tables depending on what the bh type is
+            if (bhWantThisPrtnrToMonitor.type === 'oneOff'){
+                // console.log(bhWantThisPrtnrToMonitor.name)
+                // console.log(bhWantThisPrtnrToMonitor.id)
+                await pool.query('UPDATE one_off_behaviors_users_partners SET partner_id = $2 WHERE user_id = $1 AND one_off_behavior_id = $3', [userId, newlyAddedPrtnr.id, bhWantThisPrtnrToMonitor.id]) 
+            }
+            else if (bhWantThisPrtnrToMonitor.type === 'repeated'){
+                // console.log(bhWantThisPrtnrToMonitor.name)
+                // console.log(bhWantThisPrtnrToMonitor.id)
+                await pool.query('UPDATE repeated_behaviors_users_partners SET partner_id = $2 WHERE user_id = $1 AND repeated_behavior_id = $3', [userId, newlyAddedPrtnr.id, bhWantThisPrtnrToMonitor.id]) 
+            }
+        })
+        return newlyAddedPrtnr
+    }
+
 
 
 }

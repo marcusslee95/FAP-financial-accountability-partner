@@ -20,8 +20,8 @@
 -- WHERE user_id = 1) as idOfPartnersOfOneOffBehaviorsOfUser
 -- JOIN partners ON partner_id = partners.id
 -- -- AFTER: gets partners but not the bhs they're monitoring which is what we want
-SELECT relationship, email, report_frequency, status, one_off_behaviors.name
-FROM (SELECT one_off_behavior_id, relationship, email, report_frequency, status
+SELECT partner_id, relationship, email, report_frequency, status, one_off_behaviors.name
+FROM (SELECT partner_id, one_off_behavior_id, relationship, email, report_frequency, status
 FROM (SELECT partner_id, one_off_behavior_id
 FROM one_off_behaviors_users_partners
 WHERE user_id = 1) as idOfPartnersOfOneOffBehaviorsOfUser
@@ -43,8 +43,8 @@ JOIN one_off_behaviors on one_off_behavior_id = one_off_behaviors.id
 -- FROM repeated_behaviors_users_partners
 -- WHERE user_id = 1) as idOfPartnersOfRepeatedBehaviorsOfUser
 -- JOIN partners ON partner_id = partners.id
-SELECT relationship, email, report_frequency, status, repeated_behaviors.name
-FROM (SELECT repeated_behavior_id, relationship, email, report_frequency, status
+SELECT partner_id, relationship, email, report_frequency, status, repeated_behaviors.name
+FROM (SELECT partner_id, repeated_behavior_id, relationship, email, report_frequency, status
 FROM (SELECT partner_id, repeated_behavior_id
 FROM repeated_behaviors_users_partners
 WHERE user_id = 1) as idOfPartnersOfRepeatedBehaviorsOfUser
@@ -59,7 +59,7 @@ WHERE user_id = 1) as idOfRepeatedBehaviorsOfUser
 JOIN repeated_behaviors on repeated_behavior_id = repeated_behaviors.id
 
 
--- QUERIES BELOW THIS LINE START CHANGING THE DB.... SO YOU MIGHT CONSIDER JUST RESETTING DB BY DELETING IT AND THEN RECREATING IT USING "FAP - financial accountability partner" + "seeding data.sql" FILE 
+-- QUERIES BELOW THIS LINE START CHANGING THE DB.... SO YOU MIGHT CONSIDER JUST RESETTING DB BY DELETING IT AND THEN RECREATING IT USING "FAP - financial accountability partner" + "seeding data.sql" FILE => actually.... pgadmin let's me run all the create table queries at once but not the seeding data queries..... so just created backup file "backup.sql" 
 
 --pt5: delete a partner of a user
 -- first deleting the foreign key references to that partner
@@ -72,5 +72,28 @@ SET partner_id = null WHERE user_id = 1 AND partner_id = 1
 DELETE FROM partners WHERE id = 1 RETURNING *
 
 
+-- pt6: delete a bh of a user 
+-- first deleting the foreign key references to that behavior
+DELETE FROM one_off_behaviors_users_partners WHERE user_id = 1 AND one_off_behavior_id = 1 RETURNING partner_id
+-- actually deleting the behavior
+DELETE FROM one_off_behaviors WHERE id = 1 RETURNING *
 
 
+-- pt7: add a 1Offbh to a user
+-- add to bhs table
+INSERT INTO one_off_behaviors (name, marker) VALUES ($1, $2) RETURNING *
+-- then add to bridge table to indicate connection to user
+INSERT INTO one_off_behaviors_users_partners (one_off_behavior_id, user_id) VALUES ($2, $1) RETURNING *
+
+-- pt8: add a repeatedbh to a user
+INSERT INTO repeated_behaviors (name, marker, frequency, amount) VALUES ($1, $2, $3, $4) RETURNING *
+INSERT INTO repeated_behaviors_users_partners (repeated_behavior_id, user_id) VALUES ($2, $1) RETURNING *
+
+-- pt9: add a partner to a user
+-- add to prtnrs table
+INSERT INTO partners (relationship, email, report_frequency, status) VALUES ($1, $2, $3, $4) RETURNING *
+-- create connection in one of the two bridge tables depending on what the bh type is
+-- either
+UPDATE one_off_behaviors_users_partners SET partner_id = $2 WHERE user_id = $1 AND one_off_behavior_id = $3
+-- or 
+UPDATE repeated_behaviors_users_partners SET partner_id = $2 WHERE user_id = $1 AND repeated_behavior_id = $3
