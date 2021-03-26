@@ -1,0 +1,33 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2513
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 \'93Adding a behavior\'94\
+- it\'92s more than just adding a behavior record into the behaviors table\'85..\
+- need to add record to the correct bridge table to indicate this is a bh of a certain user\
+\
+\'93Adding a partner\'94\
+- similar to above\'85 it\'92s more than just adding a partner record into partners table\'85.\
+- need to add record to correct bridge table to indicate this partner monitors this bh of this user\
+\
+\'93Deleting a behavior\'94\
+- more than just deleting behavior record from behaviors table\
+- need to get rid of the bridge table record that indicates this bh is of this user (u might ask well what about the partner_id that also would get deleted -> that\'92s in line w/what we want to do because if a behavior no longer exists we can\'92t have partner monitoring it) \
+- in the case where we just deleted the last behavior a partner was monitoring\'85 we went ahead and delete that partner (what good is there in having a partner who doesn\'92t monitor any behavior)\
+\
+\'93Deleting a partner\'94 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 - more than just deleting partner record from partners table\
+- need to update the bridge table record that indicates this partner is of this user by setting it to null (unlike above deleting a behavior scenario\'85 won\'92t delete the record because obviously a user can have a behavior they\'92re tracking w/out necessarily having a partner monitoring it)\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 \'93Getting behaviors\'94\
+- not your normal find all rows in behaviors table where user_id foreign key equals some value\'85\'85\
+- this is because we store all the relationship info in two bridge tables\'85.. \
+- so what we do is look at bridge table to find all the rows where user_id is equal to some value -> we then take all those rows and join w/behaviors table on where behavior_id equals behaviors.id (this gets us all the behaviors of a user) -> the thing is our bridge table might have multiple rows that have the same user_id and behavior_id combination because we might have multiple partners monitoring one row\'85. which means that there\'92d be multiple rows\'85\'85 problem is we want to show every behavior only once so we\'92ll only take distinct rows\
+\
+\'93Getting partners\'94 \
+- ditto ^}

@@ -36,9 +36,11 @@ const Behaviors = (props) => {
         axios.get('http://localhost:4000/users/1?behaviors')
             .then(res => {
                 const {oneOffBhs, repeatedBhs } = res.data
-                console.log(oneOffBhs)
-                console.log(repeatedBhs)
+                // console.log(oneOffBhs)
+                // console.log(repeatedBhs)
+
                 // setBhs([...oneOffBhs, ...repeatedBhs])
+
                 setOneOffBhs([...oneOffBhs])
                 setRepeatedBhs([...repeatedBhs])
             })
@@ -240,8 +242,28 @@ const Partners = (props) => {
         axios.get('http://localhost:4000/users/1?partners')
             .then(res => {
                 const {prtnrsWhoMonitorOneOffBhs, prtnrsWhoMonitorRepeatedBhs } = res.data
-                console.log(prtnrsWhoMonitorOneOffBhs)
-                console.log(prtnrsWhoMonitorRepeatedBhs)
+
+                // B4: did not consider case where partner monitored behaviors that were both one off and repeated... which caused partner to appear twice in ui
+                // console.log(prtnrsWhoMonitorOneOffBhs)
+                // console.log(prtnrsWhoMonitorRepeatedBhs)
+                // setPrtnrs([...prtnrsWhoMonitorOneOffBhs, ...prtnrsWhoMonitorRepeatedBhs])
+                // AFTER: did not consider case where partner monitored behaviors that were both one off and repeated... which caused partner to appear twice in ui
+
+                //TODO - when have the same partner show up in both arrays.... remove that partner from one array and just copy over the behaviors they're monitoring... over to the other array 
+                    //1. decide whiich array to remove from... let's remove from prtnrsWhoMonitorRepeatedBhs
+                    //2. loop through each prtnr in prtnrsWhoMonitorRepeatedBhs -> check if they exist in prtnrsWhoMonitorOneOffBhs -> if they do then take the behaviors and concatenate over to the instance of the partner in prtnrsWhoMonitorOneOffBhs..... then remove it -> realized i have to compare each prtnr in prtnrsWhoMonitorRepeatedBhs to every prtnr in prtnrsWhoMonitorOneOffBhs to see if there's any duplicate partners.... -> this means I have to / can't avoid using a nested for loop 
+                for (let i = 0; i < prtnrsWhoMonitorRepeatedBhs.length; i++){
+                    for(let j = 0; j < prtnrsWhoMonitorOneOffBhs.length; j++ ){
+                        if (prtnrsWhoMonitorRepeatedBhs[i].partnerId === prtnrsWhoMonitorOneOffBhs[j].partnerId){
+                            prtnrsWhoMonitorOneOffBhs[j].name = prtnrsWhoMonitorOneOffBhs[j].name + '; ' + prtnrsWhoMonitorRepeatedBhs[i].name //add the monitored behavior to the instance of the partner that we're keeping
+                            prtnrsWhoMonitorRepeatedBhs.splice(i) //deletes duplicate instance of partner -> https://www.w3schools.com/jsref/jsref_splice.asp
+                        }
+                    }
+                }
+                // console.log(prtnrsWhoMonitorOneOffBhs)
+                // console.log(prtnrsWhoMonitorRepeatedBhs)
+                
+                // const prtnrsWhoMonitorRepeatedBhsMinusOnesAlreadyCapturedCuzMonitoringOneOffBhs = prtnrsWhoMonitorRepeatedBhs.filter(prtnrWhoMonitorRepeatedBhs => prtnrWhoMonitorRepeatedBhs.partnerId !==  prtnrsWhoMonitorOneOffBhs[0].partnerId) -> doesn't work cuz need to compare id to all the ids in the other array
                 setPrtnrs([...prtnrsWhoMonitorOneOffBhs, ...prtnrsWhoMonitorRepeatedBhs])
             })
     }, [props.indicatorThatIShouldGetPrtnrsAgain] // React compares the current values in 2nd argument and the value on previous render. If they are not the same, effect is invoked. https://dev.to/nibble/what-is-useeffect-hook-and-how-do-you-use-it-1p9c#:~:text=Second%20argument%20to%20useEffect,-The%20second%20argument&text=React%20compares%20the%20current%20value,be%20executed%20after%20every%20render.

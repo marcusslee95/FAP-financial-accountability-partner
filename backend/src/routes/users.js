@@ -17,26 +17,27 @@ router.get('/users', async (req, res) => { //marked function as async because an
 router.get('/users/:id', async (req, res) => {
     const id = req.params.id
 
-    //B4: if the request came w/query string parameters indicating it's asking for all user's behaviors and partners.... send back that info
-    // console.log(req.query)
     const whatWasInQueryString = req.query //https://stackoverflow.com/questions/6912584/how-to-get-get-query-string-variables-in-express-js-on-node-js
-    if (whatWasInQueryString.hasOwnProperty('behaviors') //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty
-        && whatWasInQueryString.hasOwnProperty('partners')) {
-        console.log('Im inside')
 
-        //B4: let's check if the user even exists before looking for all their bhs and prtnrs -> would be a waste of load if looked for bhs and prtnrs of nonexistent user
-        const user = await UsersRepository.findById(id)
-        if (!user){
-            res.status(404).send("There's no user w/this id")
-            return
-        }
-        //AFTER: let's check if the user even exists before looking for all their bhs and prtnrs -> would be a waste of load if looked for bhs and prtnrs of nonexistent user
+    // //B4: if the request came w/query string parameters indicating it's asking for all user's behaviors and partners.... send back that info
+    // // console.log(req.query)
+    // if (whatWasInQueryString.hasOwnProperty('behaviors') //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty
+    //     && whatWasInQueryString.hasOwnProperty('partners')) {
+    //     console.log('Im inside')
 
-        const bhsAndPrtnrsOfAUser = await UsersRepository.findBhsAndPrtnrsOfAUser(id)
-        res.send(bhsAndPrtnrsOfAUser)
-        return
-    }
-    //AFTER: if the request came w/query string parameters indicating it's asking for all user's behaviors and partners.... send back that info
+    //     //B4: let's check if the user even exists before looking for all their bhs and prtnrs -> would be a waste of load if looked for bhs and prtnrs of nonexistent user
+    //     const user = await UsersRepository.findById(id)
+    //     if (!user){
+    //         res.status(404).send("There's no user w/this id")
+    //         return
+    //     }
+    //     //AFTER: let's check if the user even exists before looking for all their bhs and prtnrs -> would be a waste of load if looked for bhs and prtnrs of nonexistent user
+
+    //     const bhsAndPrtnrsOfAUser = await UsersRepository.findBhsAndPrtnrsOfAUser(id)
+    //     res.send(bhsAndPrtnrsOfAUser)
+    //     return
+    // }
+    // //AFTER: if the request came w/query string parameters indicating it's asking for all user's behaviors and partners.... send back that info
 
     //B4: if the request came w/just behaviros query string parameter.. send back behaviors 
     if (whatWasInQueryString.hasOwnProperty('behaviors')) {
@@ -148,5 +149,6 @@ router.post('/users/:userId/partners', async (req, res) => {
     const newlyAddedPrtnr = await UsersRepository.addAPartnerToAUser(userId, newPrtnr) 
     res.status(200).send(newlyAddedPrtnr)
 })
+
 
 module.exports = router
